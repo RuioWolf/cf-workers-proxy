@@ -109,8 +109,8 @@ export default {
   async fetch(request, env, ctx) {
     try {
       const {
-        PROXY_HOSTNAME,
-        PROXY_PROTOCOL = "https",
+        PROXY_HOSTNAME_REGEX,
+        TOP_DOMAIN,
         PATHNAME_REGEX,
         UA_WHITELIST_REGEX,
         UA_BLACKLIST_REGEX,
@@ -123,6 +123,12 @@ export default {
       } = env;
       const url = new URL(request.url);
       const originHostname = url.hostname;
+      const PROXY_PROTOCOL = url.protocol.replace(":", "");
+      let PROXY_HOSTNAME = env.PROXY_HOSTNAME;
+      if (PROXY_HOSTNAME_REGEX && TOP_DOMAIN && new RegExp(PROXY_HOSTNAME_REGEX).test(originHostname)) {
+        PROXY_HOSTNAME = originHostname.replace(`\.${TOP_DOMAIN}`, "");
+      }
+      //console.log(`${PROXY_PROTOCOL}, ${PROXY_HOSTNAME}`);
       if (
         !PROXY_HOSTNAME ||
         (PATHNAME_REGEX && !new RegExp(PATHNAME_REGEX).test(url.pathname)) ||
@@ -155,10 +161,10 @@ export default {
         return URL302
           ? Response.redirect(URL302, 302)
           : new Response(await nginx(), {
-              headers: {
-                "Content-Type": "text/html; charset=utf-8",
-              },
-            });
+            headers: {
+              "Content-Type": "text/html; charset=utf-8",
+            },
+          });
       }
       url.host = PROXY_HOSTNAME;
       url.protocol = PROXY_PROTOCOL;

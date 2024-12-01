@@ -38,7 +38,8 @@ Cloudflare Workers HTTP 反向代理
 | 变量名                    | 必填  | 默认值   | 示例                                             | 备注                  |
 |------------------------|-----|-------|------------------------------------------------|---------------------|
 | PROXY_HOSTNAME         | √   |       | github.com                                     | 代理地址 hostname       |
-| PROXY_PROTOCOL         | ×   | https | https                                          | 代理地址协议              |
+| PROXY_HOSTNAME_REGEX   | ×   |       | `(github\.com\|hub\.docker\.com)`              | 代理地址正则表达式 (与 TOP_DOMAIN 配合使用会替换 PROXY_HOSTNAME)       |
+| TOP_DOMAIN             | ×   |       | `cfproxy.yourdomain.com`                       | 你的域名                |
 | PATHNAME_REGEX         | ×   |       | ^/jonssonyan/                                  | 代理地址路径正则表达式         |
 | UA_WHITELIST_REGEX     | ×   |       | (curl)                                         | User-Agent 白名单正则表达式 |
 | UA_BLACKLIST_REGEX     | ×   |       | (curl)                                         | User-Agent 黑名单正则表达式 |
